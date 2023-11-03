@@ -1,52 +1,90 @@
 #include "BigReal.h"
+#include <cctype>
 
-BigReal::BigReal(string real)
-{
-    string digits = "0123456789";
-    string non_digits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ()'^$%!@#=_|/<>?";
-    bool valid = 1;
+BigReal::BigReal(const string &realString) {
+    isValid = validateInput(realString);
+    if (!isValid) { cout << "[ERROR]: Not a real number."; }
+    else {
+        // First : Extract Sign
+        if (!isdigit(realString[0]) && realString[0] != '.') {
+            sign = realString[0];
+            realString.substr(1);
+        } else {
+            sign = '+';
+        }
 
-    for (int i = 0; i<real.size() ; i++){
-        if (find(non_digits.begin(), non_digits.end(), real[i]) != non_digits.end()){
-            valid = 0;
-            break;
+        // Second : Extract Integer part
+
+        int dot_index = (int) realString.find('.');
+        if (dot_index != string::npos) {
+            if (isdigit(realString[0])) {
+                integerPart = realString.substr(0, dot_index);
+                fractionPart = realString.substr(dot_index + 1); // extracting fraction part if no sign was given
+            } else if (!isdigit(realString[0]) && realString[0] != '.') {
+                integerPart = realString.substr(1, dot_index - 1);
+                fractionPart = realString.substr(dot_index + 1); // extracting fraction part if a sign was gives
+
+            } else {
+                integerPart = "0";
+                fractionPart = realString.substr(dot_index + 1); // extracting fraction part if no sign and a dot given
+            }
+        }
+
+
+
+    };
+
+}
+
+BigReal BigReal::operator+(BigReal &r) {
+    // Implement addition here
+}
+
+BigReal BigReal::operator-(BigReal &r) {
+    // Implement subtraction here
+}
+
+bool BigReal::operator==(BigReal &r) {
+    // Implement equality comparison here
+}
+
+void BigReal::print() {
+    if(isValid){
+        if (fractionPart.empty())fractionPart = "0";
+        if (integerPart.empty())integerPart = "0";
+        cout << sign << integerPart << "." << fractionPart << endl;
+    }
+}
+
+BigReal::~BigReal() {
+    // Destructor code, if needed
+}
+
+bool BigReal::validateInput(const string &input) {
+    string invalidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ()'^$%!@#=_|/<>?";
+    int dotCount = 0;
+    bool isValid = true;
+
+    for (int i = 0; i < input.size(); i++) {
+        if (invalidChars.find(input[i]) != string::npos) {
+            isValid = false;
+            break;  // If an invalid character is found
+        }
+        if (i == 0) {
+            if (input[i] != '+' && input[i] != '-' && input[i] != '.' && !isdigit(input[i])) {
+                isValid = false;
+                break;  // If the first character is invalid
+            }
+        }
+        if (input[i] == '.') {
+            dotCount++;
+            if (dotCount > 1) {
+                isValid = false;
+                break;  // More than one decimal point
+            }
         }
     }
-     
 
-    if(!valid || find(digits.begin(), digits.end(), real[0]) == digits.end() && real[0] != '+' && real[0] != '-' && real[0] != '.' || count(real.begin(), real.end(), '.') > 1){
-        cout << "NaN";
-    }
-    else{
-        if(real[0] == '-' || real[0] == '+'){
-            sign = real[0];
-            real = real.substr(1, real.size() - 2);   ///////////////////////
-        }
-        integer = real.substr(0, find(real.begin(), real.end(), '.') - real.begin());
-        fraction = real.substr(find(real.begin(), real.end(), '.') - real.begin() + 1, real.size() - (find(real.begin(), real.end(), '.') - real.begin()) - 2);
-    }
+    return isValid;
 }
 
-BigReal BigReal::operator+ (BigReal& r){
-
-}
-
-BigReal BigReal::operator- (BigReal& r){
-
-}
-
-BigReal BigReal::operator== (BigReal& r){
-
-}
-
-void BigReal::print(){
-    // if (fraction.empty())
-    //     cout << sign << integer<< endl;
-    // else
-        cout << sign << integer << "." << fraction << endl;
-}
-
-BigReal::~BigReal()
-{
-
-}

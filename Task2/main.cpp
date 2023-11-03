@@ -2,7 +2,10 @@
 #include "BigReaL.cpp"
 using namespace std;
 int main(){
-    BigReal a ("5.2");
+    string real;
+    cin >>real;
+    BigReal a (real);
     a.print();
+
     return 0;
 }

@@ -2,23 +2,48 @@
 #define BIGREAL_H
 
 #include <bits/stdc++.h>
+
 using namespace std;
 
 #pragma once
 
-class BigReal
-{
-public:
-    BigReal(string real);
-    BigReal operator+ (BigReal& r);
-    BigReal operator- (BigReal& r);
-    BigReal operator== (BigReal& r);
-    void print();
-    ~BigReal();
-
+class BigReal {
 private:
-    char sign = '+';
-    string integer = "", fraction = "";
+
+    string realString;
+    char sign;
+    string integerPart;
+    string fractionPart;
+    bool isValid=true;
+
+    // function for input validation
+    static bool validateInput(const string &input);
+
+public:
+    // Constructors
+    BigReal() : sign('+'), integerPart("0"), fractionPart("0") {}
+
+    BigReal(const string& input);
+
+    // Operator overloading
+    BigReal operator+(BigReal &other);
+
+    BigReal operator-(BigReal &other);
+
+    bool operator==(BigReal &other);
+
+    // Getter methods
+    char getSign() const { return sign; }
+
+    string getIntegerPart() const { return integerPart; }
+
+    string getFractionPart() const { return fractionPart; }
+
+    // Print method
+    void print() ;
+
+    // Destructor
+    ~BigReal();
 };
 
 #endif
