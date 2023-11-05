@@ -18,10 +18,15 @@ private:
 
     // function for input validation
     static bool validateInput(const string &input);
+    static void removeZeros( string &Integer, string& Fraction);
 
 public:
     // Constructors
-    BigReal() : sign('+'), integerPart("0"), fractionPart("0") {}
+    BigReal() {
+        sign = '+';
+        integerPart="0";
+        fractionPart="0";
+    }
 
     BigReal(const string& input);
 
@@ -31,6 +36,8 @@ public:
     BigReal operator-(BigReal &other);
 
     bool operator==(BigReal &other);
+    bool operator>(BigReal &other);
+    bool operator<(BigReal &other);
 
     // Getter methods
     char getSign() const { return sign; }
@@ -40,8 +47,7 @@ public:
     string getFractionPart() const { return fractionPart; }
 
     // Print method
-    void print() ;
-
+    friend ostream& operator << (ostream& out, BigReal num);
     // Destructor
     ~BigReal();
 };
