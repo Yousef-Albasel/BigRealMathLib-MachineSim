@@ -89,10 +89,139 @@ BigReal BigReal::operator+(BigReal &r) {
 
     return result;
 }
+    if (sigNum1 != sigNum2) {
+        for (int i = integerPart.size() - 1; i >= 0; --i) {
+            int digit1 = integerPart[i] - '0';
+            int digit2 = r.integerPart[i] - '0';
+            digit1 -= carry;
+            if (digit1 < digit2) {
+                    digit1 += 10;
+                    carry = 1;
+                }
+            else {
+                carry = 0;
+            }
+            int sum = digit1 - digit2;
+            integerSum += to_string(sum);
+        }
+
+        for (int i = fractionPart.size() - 1; i >= 0; --i) {
+            int digit1 = fractionPart[i] - '0';
+            int digit2 = r.fractionPart[i] - '0';
+
+            digit1 -= carry;
+            if (digit1 < digit2) {
+                digit1 += 10;
+                carry = 1;
+            }
+            else {
+                carry = 0;
+            }
+            int sum = digit1 - digit2;
+            fractionSum += to_string(sum);
+        }
+        }
+            reverse(integerSum.begin(), integerSum.end());
+            reverse(fractionSum.begin(), fractionSum.end());
+            if (intNum1 > intNum2) {
+                result.sign = sigNum1;
+            } else result.sign = sigNum2;
+            removeZeros(integerPart, fractionPart);
+            result.integerPart = integerSum;
+            result.fractionPart = fractionSum;
+            return result;
+        }
+
 
 
 BigReal BigReal::operator-(BigReal &r) {
-    // Implement subtraction here
+ BigReal result;
+    char sigNum1, sigNum2;
+    int intNum1 = stoi(integerPart), intNum2 = stoi(r.integerPart);
+    sigNum1 = sign;
+    sigNum2 = r.sign;
+    string integerSub = "";
+    string fractionSub = "";
+    int carry = 0;
+
+    //  padding with zeros to get same length for both reals.
+    while (integerPart.length() < r.integerPart.length()) integerPart = '0' + integerPart;
+    while (integerPart.length() > r.integerPart.length()) r.integerPart = '0' + r.integerPart;
+    while (fractionPart.length() < r.fractionPart.length()) fractionPart += '0';
+    while (fractionPart.length() > r.fractionPart.length()) r.fractionPart += '0';
+
+    if (sigNum1 == sigNum2) {
+        for (int i = integerPart.size() - 1; i >= 0; --i) {
+            int digit1 = integerPart[i] - '0';
+            int digit2 = r.integerPart[i] - '0';
+            digit1 -= carry;
+            if (digit1 < digit2) {
+                digit1 += 10;
+                carry = 1;
+            } else {
+                carry = 0;
+            }
+            int sum = digit1 - digit2;
+            integerSub += to_string(sum);
+        }
+
+        for (int i = fractionPart.size() - 1; i >= 0; --i) {
+            int digit1 = fractionPart[i] - '0';
+            int digit2 = r.fractionPart[i] - '0';
+
+            digit1 -= carry;
+            if (digit1 < digit2) {
+                digit1 += 10;
+                carry = 1;
+            } else {
+                carry = 0;
+            }
+            int sum = digit1 - digit2;
+            fractionSub += to_string(sum);
+        }
+
+        reverse(integerSub.begin(), integerSub.end());
+        reverse(fractionSub.begin(), fractionSub.end());
+        if (intNum1 > intNum2) {
+            result.sign = sigNum1;
+        } else result.sign = sigNum2;
+        removeZeros(integerPart, fractionPart);
+        result.integerPart = integerSub;
+        result.fractionPart = fractionSub;
+        return result;
+    }
+
+    if (sigNum1 != sigNum2) {
+        for (int i = fractionPart.size() - 1; i >= 0; --i) {
+            int digit1 = fractionPart[i] - '0';
+            int digit2 = r.fractionPart[i] - '0';
+            int sum = digit1 + digit2 + carry;
+            carry = sum / 10;
+            fractionSub += to_string(sum % 10);
+        }
+
+        // Add the integer parts
+        for (int i = integerPart.size() - 1; i >= 0; --i) {
+            int digit1 = integerPart[i] - '0';
+            int digit2 = r.integerPart[i] - '0';
+            int sum = digit1 + digit2 + carry;
+            carry = sum / 10;
+            integerSub += to_string(sum % 10);
+        }
+
+        // Handle any carry left
+        if (carry > 0) {
+            integerSub = to_string(carry) + integerSub;
+        }
+        // reversing to get the right form
+        reverse(integerSub.begin(), integerSub.end());
+        reverse(fractionSub.begin(), fractionSub.end());
+        result.sign = sigNum2;
+        result.integerPart = integerSub;
+        result.fractionPart = fractionSub;
+
+        return result;
+    }
 }
 
 bool BigReal::operator==(BigReal &r) {
