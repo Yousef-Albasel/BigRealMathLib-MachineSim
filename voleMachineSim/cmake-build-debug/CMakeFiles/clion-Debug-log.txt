@@ -1,0 +1,4 @@
+"C:\Program Files\JetBrains\CLion 2022.3\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2022.3/bin/ninja/win/ninja.exe" -G Ninja -S "F:\Computer Science 2022-2023\Semster Three\OOP\Assignments\voleMachineSim" -B "F:\Computer Science 2022-2023\Semster Three\OOP\Assignments\voleMachineSim\cmake-build-debug"
+-- Configuring done
+-- Generating done
+-- Build files have been written to: F:/Computer Science 2022-2023/Semster Three/OOP/Assignments/voleMachineSim/cmake-build-debug
