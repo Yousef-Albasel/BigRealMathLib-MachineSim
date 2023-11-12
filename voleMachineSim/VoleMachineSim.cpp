@@ -8,18 +8,18 @@ using namespace std;
 Register::Register() {
     value = 0x00;
 }
-BYTE Register::getValue() {
+BYTE Register::getValue() const {
     return value;
 }
 void Register::setValue(BYTE val) {
  value = val;
-};
+}
 
 Memory::Memory() {
     // Initialize cells with all 0x00 values
     fill(begin(cells), end(cells), 0x00);
 
-};
+}
 
 void Memory::store(BYTE address, BYTE &data) {
     cells[address] = (data);
@@ -29,13 +29,19 @@ void Memory::clearMemory() {
     fill(begin(cells), end(cells), 0x00);
 }
 
-int Memory::getCell(BYTE idx) {
+BYTE Memory::getCell(int idx) {
     return cells[idx];
 }
 
+BYTE* Memory::getStartAddress()  {
+    return &cells[0];
+}
+
 MachineSimulator::MachineSimulator() {
-    programCounter = 0x00;
-};
+    BYTE* initialAddress = memory.getStartAddress();
+    programCounter = initialAddress;
+
+}
 
 
 void MachineSimulator::loadProgram(const string &filename, BYTE address) {
@@ -72,11 +78,15 @@ void MachineSimulator::displayMenu() {
     printf(" 1- Load Program\n"
            " 2- Clear Memory\n"
            " 3- Show Memory Status\n"
-           " 4- Exit\n");
+           " 4- Set Program Counter\n"
+           " 5- One Cycle\n"
+           " 6- Run Until Terminate\n"
+           " Other- Exit\n");
     cin >> opt;
     string f_name;
     int address_NAME;
     BYTE address;
+    BYTE PC_Address;
     switch (opt) {
         case 1:
             printf("Enter File Program name: \n");
@@ -91,16 +101,19 @@ void MachineSimulator::displayMenu() {
             MachineSimulator::memory.clearMemory();
             break;
         case 3:
-            MachineSimulator::display_Status();
+            MachineSimulator::displayStatus();
             break;
         case 4:
-            exit(-1);
+            cout << "Enter Address to start fetching from: \n";
+            cin >>hex >> PC_Address;
+            setProgramCounter(&PC_Address);
             break;
-
+        default :
+            return;
     }
 }
 
-void MachineSimulator::display_Status() {
+void MachineSimulator::displayStatus() {
     // Print Memory Layout
     cout << "Memory Layout:" << endl;
     cout << "----------------" << endl;
@@ -123,6 +136,11 @@ void MachineSimulator::display_Status() {
              << uppercase << setw(2) << setfill('0') << static_cast<int>(registers[i].getValue()) << ']' << endl;
     }
     cout << "----------------" << endl;
+
+    cout << "Program Counter= " << *programCounter << " \n";
 }
 
+void MachineSimulator::setProgramCounter(BYTE* address) {
+    programCounter = address;
+}
 

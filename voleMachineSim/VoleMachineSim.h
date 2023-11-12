@@ -13,7 +13,7 @@ class Register {
 public:
     Register();
 
-    BYTE getValue();
+    BYTE getValue() const;
 
     void setValue(BYTE value);
 
@@ -42,7 +42,7 @@ public:
 
     void store(BYTE address, BYTE &data);
 
-    int getCell( BYTE idx);
+    BYTE getCell( int idx);
 
     void clearMemory();
 
@@ -50,7 +50,8 @@ public:
 
     short getInstruction(BYTE address);
 
-private:
+    BYTE* getStartAddress()  ;
+        private:
     BYTE cells[256]{};  // 16*16
 };
 
@@ -65,8 +66,9 @@ public:
 
     void displayMenu();
 
-    void display_Status();
+    void displayStatus();
 
+    void setProgramCounter(BYTE* address);
     //    Instruction fetch();
     void decode();
 
@@ -74,7 +76,7 @@ public:
 
 private:
     Register instructionRegister;
-    BYTE programCounter;
+    BYTE* programCounter{};
     Memory memory;
     Register registers[16];
 };
