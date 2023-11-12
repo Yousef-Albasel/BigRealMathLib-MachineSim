@@ -1,3 +1,0 @@
-F:/Computer Science 2022-2023/Semster Three/OOP/Assignments/voleMachineSim/cmake-build-debug/CMakeFiles/voleMachineSim.dir
-F:/Computer Science 2022-2023/Semster Three/OOP/Assignments/voleMachineSim/cmake-build-debug/CMakeFiles/edit_cache.dir
-F:/Computer Science 2022-2023/Semster Three/OOP/Assignments/voleMachineSim/cmake-build-debug/CMakeFiles/rebuild_cache.dir

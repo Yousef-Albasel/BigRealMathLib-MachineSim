@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include <windef.h>
+
 using namespace std;
 
 class Memory; // just forwarding, ignore this
@@ -11,8 +12,10 @@ class Memory; // just forwarding, ignore this
 class Register {
 public:
     Register();
+
     BYTE getValue();
-    void storeValue(BYTE value);
+
+    void setValue(BYTE value);
 
 private:
     BYTE value;
@@ -36,9 +39,15 @@ private:
 class Memory {
 public:
     Memory();
+
     void store(BYTE address, BYTE &data);
-    void print();
+
+    int getCell( BYTE idx);
+
+    void clearMemory();
+
     BYTE get(BYTE address);
+
     short getInstruction(BYTE address);
 
 private:
@@ -51,9 +60,16 @@ private:
 class MachineSimulator {
 public:
     MachineSimulator();
-     void loadProgram(const string& filename, BYTE address);
-//    Instruction fetch();
+
+    void loadProgram(const string &filename, BYTE address);
+
+    void displayMenu();
+
+    void display_Status();
+
+    //    Instruction fetch();
     void decode();
+
     void runProgram(); // to call execute in each instruction operation
 
 private:

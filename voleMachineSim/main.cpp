@@ -6,11 +6,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 int main() {
-    string programFile;
-    BYTE startingAddress;
     MachineSimulator CPU;
-    printf("Enter Program File name: ");
-    CPU.loadProgram("ins.txt",00);
-
-    return 0;
+    printf("Welcome to Vole Machine Simulator\n");
+    while(true) {
+        CPU.displayMenu();
+    }
 }

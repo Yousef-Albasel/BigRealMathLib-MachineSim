@@ -4,9 +4,16 @@
 
 using namespace std;
 
-MachineSimulator::MachineSimulator() {};
 
-Register::Register() {};
+Register::Register() {
+    value = 0x00;
+}
+BYTE Register::getValue() {
+    return value;
+}
+void Register::setValue(BYTE val) {
+ value = val;
+};
 
 Memory::Memory() {
     // Initialize cells with all 0x00 values
@@ -15,16 +22,23 @@ Memory::Memory() {
 };
 
 void Memory::store(BYTE address, BYTE &data) {
-        cells[address] = (data);
+    cells[address] = (data);
 }
 
-void Memory::print() {
-    for (auto i = 0; i < 256; i++) {
-        cout << "[" << i << ":" << static_cast<int>(cells[i]) << "]\n";
-    }
+void Memory::clearMemory() {
+    fill(begin(cells), end(cells), 0x00);
 }
 
-void MachineSimulator::loadProgram(const string& filename, BYTE address) {
+int Memory::getCell(BYTE idx) {
+    return cells[idx];
+}
+
+MachineSimulator::MachineSimulator() {
+    programCounter = 0x00;
+};
+
+
+void MachineSimulator::loadProgram(const string &filename, BYTE address) {
     fstream programFile(filename);
 
     if (!programFile.is_open()) {
@@ -32,7 +46,7 @@ void MachineSimulator::loadProgram(const string& filename, BYTE address) {
         return;
     }
 
-    cout << "Program Loaded at address: " << hex << static_cast<int>(address) << endl;
+    cout << "Program Loaded at address: 0x" << hex << uppercase << static_cast<int>(address) << endl;
 
     string line;
     BYTE memoryAddress = address;
@@ -50,7 +64,65 @@ void MachineSimulator::loadProgram(const string& filename, BYTE address) {
         }
     }
     programFile.close();
-
-    memory.print();
 }
+
+
+void MachineSimulator::displayMenu() {
+    int opt;
+    printf(" 1- Load Program\n"
+           " 2- Clear Memory\n"
+           " 3- Show Memory Status\n"
+           " 4- Exit\n");
+    cin >> opt;
+    string f_name;
+    int address_NAME;
+    BYTE address;
+    switch (opt) {
+        case 1:
+            printf("Enter File Program name: \n");
+            cin >> f_name;
+            printf("Enter starting address in hex: \n");
+            cin >> hex >> address_NAME;
+            address = static_cast<BYTE>(address_NAME );
+
+            MachineSimulator::loadProgram(f_name, address);
+            break;
+        case 2:
+            MachineSimulator::memory.clearMemory();
+            break;
+        case 3:
+            MachineSimulator::display_Status();
+            break;
+        case 4:
+            exit(-1);
+            break;
+
+    }
+}
+
+void MachineSimulator::display_Status() {
+    // Print Memory Layout
+    cout << "Memory Layout:" << endl;
+    cout << "----------------" << endl;
+
+    for (int i = 0; i < 256; i++) {
+        if (i == 64 || i == 128 || i == 192) {
+            cout << endl;
+        }
+        cout << "[" << uppercase << setw(2) << setfill('0') << i << ":"
+             << uppercase << setw(2) << setfill('0') << static_cast<int>(memory.getCell(i)) << "]\n";
+    }
+    cout << endl << "----------------" << endl;
+
+    // Print Register Values
+    cout << "Register Values:" << endl;
+    cout << "----------------" << endl;
+
+    for (int i = 0; i < 16; ++i) {
+        cout << "[" <<hex<< uppercase << setw(2) << setfill('0') << i << ":"
+             << uppercase << setw(2) << setfill('0') << static_cast<int>(registers[i].getValue()) << ']' << endl;
+    }
+    cout << "----------------" << endl;
+}
+
 
