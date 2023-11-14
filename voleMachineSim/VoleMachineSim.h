@@ -13,26 +13,13 @@ class Register {
 public:
     Register();
 
-    BYTE getValue() const;
+    BYTE getValue() ;
 
     void setValue(BYTE value);
 
 private:
     BYTE value;
 };
-// Instruction Definition
-
-//class Instruction {
-//public:
-//    Instruction(Register& programCounter, Register registers[], Memory& memory);
-//    virtual void execute() = 0;
-//
-//protected:
-//    BYTE opCode;
-//    Register& programCounter;
-//    Register registers[16];
-//    Memory& memory;
-//};
 
 // Memory Definition
 
@@ -40,18 +27,15 @@ class Memory {
 public:
     Memory();
 
-    void store(BYTE address, BYTE &data);
+    void store(BYTE address, BYTE data);
 
-    BYTE getCell( int idx);
+    BYTE getCell(int idx);
 
     void clearMemory();
 
-    BYTE get(BYTE address);
+    BYTE *getStartAddress();
 
-    short getInstruction(BYTE address);
-
-    BYTE* getStartAddress()  ;
-        private:
+private:
     BYTE cells[256]{};  // 16*16
 };
 
@@ -68,17 +52,20 @@ public:
 
     void displayStatus();
 
-    void setProgramCounter(BYTE* address);
-    //    Instruction fetch();
+    void setProgramCounter(BYTE address);
+
+    void fetchInstruction();
+
     void decode();
 
-    void runProgram(); // to call execute in each instruction operation
+    void findAndExecuteInstruction(BYTE opcode, BYTE registerIndex, BYTE addressValue);
 
 private:
-    Register instructionRegister;
-    BYTE* programCounter{};
+    Register instructionRegister[2];
+    BYTE programCounter;
     Memory memory;
     Register registers[16];
+    BYTE opcode,addValue,registerIndex;
 };
 
 
