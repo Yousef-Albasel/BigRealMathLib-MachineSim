@@ -1,6 +1,6 @@
 //                                                                      بسم الله الرحمن الرحيم
 #include <windef.h>
-#include "VoleMachineSim.cpp"
+#include "VoleMachineSim.h"
 #include <bits/stdc++.h>
 
 #define BYTE unsigned char
