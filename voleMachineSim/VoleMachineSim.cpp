@@ -60,15 +60,18 @@ void MachineSimulator::loadProgram(const string &filename, BYTE address) {
     BYTE memoryAddress = address;
     while (getline(programFile, line)) {
         istringstream ss(line);
-        int token1, token2;
+        int token1, token2, token3;
 
-        while (ss >> hex >> token1 >> hex >> token2) {
+        while (ss >> hex >> token1 >> hex >> token2 >> hex >> token3) {
             BYTE data1 = static_cast<BYTE>(token1);
             BYTE data2 = static_cast<BYTE>(token2);
+            BYTE data3 = static_cast<BYTE>(token3);
 
             // Combine the two bytes and store in memory
             BYTE combinedData = (data1 << 4) | data2;
             memory.store(memoryAddress++, combinedData);
+            combinedData = (data3 << 4);
+            memory.store(memoryAddress++, '0'+combinedData);
         }
     }
     programFile.close();
