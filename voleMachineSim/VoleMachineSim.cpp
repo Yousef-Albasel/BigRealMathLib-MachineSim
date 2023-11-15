@@ -27,7 +27,7 @@ void Register::setValue(BYTE val) {
     value = val; // Setter Method
 }
 
-/* ============ Memory Implementation ============*/
+/*  ============ Memory Implementation ============*/
 
 Memory::Memory() {
     // Initialize cells with all 0x00 values
@@ -166,7 +166,7 @@ void MachineSimulator::displayMenu() {
 }
 
 void MachineSimulator::displayStatus() {
-    // Print Memory Layout
+    //  Print Memory Layout
     cout << "Memory Layout:" << endl;
     cout << "----------------" << endl;
 
@@ -196,7 +196,7 @@ void MachineSimulator::displayStatus() {
          << setw(2) << setfill('0') << static_cast<int>(instructionRegister[1].getValue()) << endl;
 }
 
-// setting program counter to specific location
+// setting program counter to specific location 
 void MachineSimulator::setProgramCounter(BYTE address) {
     programCounter = address;
 }
