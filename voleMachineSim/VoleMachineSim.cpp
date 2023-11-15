@@ -1,51 +1,72 @@
 #include <bits/stdc++.h>
 #include "VoleMachineSim.h"
-#include <windef.h>
 
+#define BYTE unsigned char
 using namespace std;
+enum Opcodes {
+    LOAD = 0X1,
+    LOAD2 = 0X2,
+    STORE = 0X3,
+    MOVE = 0X4,
+    ADD = 0X5,
+    JUMP = 0XB,
+    HALT = 0XC
+};
+
+/* ============ Register Implementation ============*/
 
 Register::Register() {
-    value = 0x00;
+    value = 0x00; // initialize with 0x0
 }
 
 BYTE Register::getValue() {
-    return value;
+    return value; // Getter method
 }
 
 void Register::setValue(BYTE val) {
-    value = val;
+    value = val; // Setter Method
 }
+
+/*  ============ Memory Implementation ============*/
 
 Memory::Memory() {
     // Initialize cells with all 0x00 values
     fill(begin(cells), end(cells), 0x00);
-
 }
 
 void Memory::store(BYTE address, BYTE data) {
-    cells[address] = (data);
+    cells[address] = (data); // Setter method for using on array of cells
 }
 
 void Memory::clearMemory() {
-    fill(begin(cells), end(cells), 0x00);
+    fill(begin(cells), end(cells), 0x00); // clear memory method sets all with 0x0
 }
 
 BYTE Memory::getCell(int idx) {
-    return cells[idx];
+    return cells[idx]; // getter method
 }
+//
+//BYTE *Memory::getStartAddress() {
+//    return &cells[0];
+//}
 
-BYTE *Memory::getStartAddress() {
-    return &cells[0];
-}
+/* ============ Machine Implementation ============*/
 
 MachineSimulator::MachineSimulator() {
-    BYTE *initialAddress = memory.getStartAddress();
-    programCounter = *initialAddress;
+    programCounter = 0x0;
     instructionRegister[0].setValue(0x00);
     instructionRegister[1].setValue(0x01);
 }
 
 
+void MachineSimulator::clearRegisters() {
+    for (int i = 0; i < 16; ++i) {
+        registers[i].setValue(0x0); // Clears all registers and screen
+    }
+    screenOutput = "";
+}
+
+// loading the file function
 void MachineSimulator::loadProgram(const string &filename, BYTE address) {
     fstream programFile(filename);
 
@@ -58,20 +79,32 @@ void MachineSimulator::loadProgram(const string &filename, BYTE address) {
 
     string line;
     BYTE memoryAddress = address;
+    // Consider taking the input line as 0XA 0XB 0XCD
     while (getline(programFile, line)) {
+<<<<<<< HEAD
         istringstream ss(line);
         int token1, token2, token3;
 
         while (ss >> hex >> token1 >> hex >> token2 >> hex >> token3) {
+=======
+        istringstream ss(line); // string stream to get each token separately
+        int token1, token2, token3; // eg: token1 = 0xA , token2 = 0xB, token3 = 0xCD
+
+        while (ss >> hex >> token1 >> hex >> token2 >> hex >> token3) { // take the whole 3 tokens per lien
+>>>>>>> fa62275123f1f801fa8a457cb8734d7716c6e806
             BYTE data1 = static_cast<BYTE>(token1);
             BYTE data2 = static_cast<BYTE>(token2);
             BYTE data3 = static_cast<BYTE>(token3);
 
-            // Combine the two bytes and store in memory
+            // Combine the first two tokens and store in memory
             BYTE combinedData = (data1 << 4) | data2;
             memory.store(memoryAddress++, combinedData);
+<<<<<<< HEAD
             combinedData = (data3 << 4);
             memory.store(memoryAddress++, '0'+combinedData);
+=======
+            memory.store(memoryAddress++, data3); // store the last token in memory, as it doesn't need combine
+>>>>>>> fa62275123f1f801fa8a457cb8734d7716c6e806
         }
     }
     programFile.close();
@@ -81,13 +114,14 @@ void MachineSimulator::loadProgram(const string &filename, BYTE address) {
 void MachineSimulator::displayMenu() {
     int opt;
     printf(" 1- Load Program\n"
-           " 2- Clear Memory\n"
-           " 3- Show Memory Status\n"
-           " 4- Set Program Counter\n"
-           " 5- Fetch Program Counter\n"
-           " 6- Decode Instruction\n"
-           " 7- One Cycle\n"
-           " 8- Run Until Terminate\n"
+           " 2- Show Memory Status\n"
+           " 3- Set Program Counter\n"
+           " 4- Fetch Program Counter\n"
+           " 5- Decode Instruction\n"
+           " 6- One Cycle\n"
+           " 7- Run Until Halt\n"
+           " 8- Clear Memory\n"
+           " 9- Clear Registers\n"
            " Other- Exit\n");
     cin >> opt;
     string f_name;
@@ -95,7 +129,7 @@ void MachineSimulator::displayMenu() {
     BYTE address, PC_Address;
     int PC_Address_NAME;
     switch (opt) {
-        case 1:
+        case 1: // Load file
             printf("Enter File Program name: \n");
             cin >> f_name;
             printf("Enter starting address in hex: \n");
@@ -104,26 +138,39 @@ void MachineSimulator::displayMenu() {
 
             MachineSimulator::loadProgram(f_name, address);
             break;
-        case 2:
+        case 2: // clear memory
             MachineSimulator::memory.clearMemory();
+            MachineSimulator::clearRegisters();
             break;
-        case 3:
+        case 3: // display current memory and registers and counters status
             MachineSimulator::displayStatus();
             break;
-        case 4:
+        case 4: // start fetching from a specific location
             cout << "Enter Address to start fetching from: \n";
             cin >> hex >> PC_Address_NAME;
             PC_Address = static_cast<BYTE>(PC_Address_NAME);
             setProgramCounter(PC_Address);
             break;
-        case 5:
+        case 5: // fetch current PC
             fetchInstruction();
             break;
-        case 6:
+        case 6: // DECODE the current instruction
             decode();
             break;
-        case 7:
+        case 7: // execute current instruction
             findAndExecuteInstruction(opcode, registerIndex, addValue);
+            break;
+        case 8: // keep executing until halt
+            while (true) {
+                fetchInstruction();
+                decode();
+                findAndExecuteInstruction(opcode, registerIndex, addValue);
+
+                if (opcode == 0x0C && registerIndex == 0x00 && addValue == 0x00) {
+                    cout << "Program Executed Successfully!\n";
+                    break;
+                }
+            }
             break;
         default :
             exit(-1);
@@ -131,7 +178,7 @@ void MachineSimulator::displayMenu() {
 }
 
 void MachineSimulator::displayStatus() {
-    // Print Memory Layout
+    //  Print Memory Layout
     cout << "Memory Layout:" << endl;
     cout << "----------------" << endl;
 
@@ -153,13 +200,15 @@ void MachineSimulator::displayStatus() {
              << uppercase << setw(2) << setfill('0') << static_cast<int>(registers[i].getValue()) << ']' << endl;
     }
     cout << "----------------\n\n";
-
+    if (!screenOutput.empty())
+        cout << "Screen:" << screenOutput << endl;
     cout << "Program Counter= 0x" << uppercase << setw(2) << setfill('0') << static_cast<int>( programCounter) << " \n";
     cout << "Instruction Register= " << hex << uppercase
          << setw(2) << setfill('0') << static_cast<int>(instructionRegister[0].getValue())
          << setw(2) << setfill('0') << static_cast<int>(instructionRegister[1].getValue()) << endl;
 }
 
+// setting program counter to specific location 
 void MachineSimulator::setProgramCounter(BYTE address) {
     programCounter = address;
 }
@@ -185,9 +234,9 @@ void MachineSimulator::decode() {
     cout << "Instruction: " << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(data1);
     cout << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(data2) << endl;
 
-    opcode = data1 >> 4;
-    registerIndex = data1 & 0x0F;
-    addValue = data2;
+    opcode = data1 >> 4; // shift 4 bits to the right, so we can get the opcode separately
+    registerIndex = data1 & 0x0F; // add with 0x00001111, so we can get the second nipple separately
+    addValue = data2; // the value in address is the data2.
     cout << "\n Opcode:" << uppercase << hex << static_cast<int>(opcode)
          << " Reg:" << uppercase << hex << static_cast<int>(registerIndex)
          << " Add" << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(addValue) << endl;
@@ -199,36 +248,60 @@ void MachineSimulator::findAndExecuteInstruction(BYTE opcode, BYTE registerIndex
     int add_result;
     f_bits = addressValue >> 4;
     s_bits = addressValue & 0x0F;
+    int f_val, s_val;
     switch (opcode) {
-        case 0x01:
+        case LOAD:
             registers[registerIndex].setValue(memory.getCell(addressValue));
+            cout << "LOAD 0x" <<setw(2)<<setfill('0')<< registerIndex << " with pattern in: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
             break;
-        case 0x02:
+
+        case LOAD2:
             registers[registerIndex].setValue(addressValue);
+            cout << "LOAD 0x" <<setw(2)<<setfill('0')<< registerIndex << " with the pattern: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
             break;
-        case 0x03:
+
+        case STORE:
             // 3210 put content of reg 2 in add 10
             memory.store(addressValue, registers[registerIndex].getValue());
+            cout << "STORE the value in register 0x" <<setw(2)<<setfill('0')<< registerIndex << " in memory cell: 0x" << static_cast<int>(addressValue)
+                 << ". [SUCCESS]\n";
+            if (addressValue == 0x00) {
+                memory.store(addressValue, registers[registerIndex].getValue());
+                screenOutput += static_cast<int> (registers[registerIndex].getValue());
+            }
             break;
-        case 0x04:
-            registers[s_bits] = registers[f_bits];
-            break;
-        case 0x05:
 
+        case MOVE:
+            registers[s_bits] = registers[f_bits];
+            cout << "MOVE 0x" <<setw(2)<<setfill('0')<< registerIndex << " to: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
             break;
-        case 0x0B:
-            if(registers[registerIndex].getValue() == registers[0x00].getValue())
-            {
+
+        case ADD:
+            cout << "ADD the values found in 0x" << f_bits << " and 0x" << s_bits << " then store in 0x" <<setw(2)<<setfill('0')<< registerIndex
+                 << ". [SUCCESS]\n";
+
+            f_val = static_cast<int>(registers[f_bits].getValue());
+            s_val = static_cast<int>(registers[s_bits].getValue());
+            add_result = f_val + s_val;
+            add_result &= ((1 << 8) - 1);
+            registers[registerIndex].setValue(static_cast<BYTE>(add_result));
+            break;
+
+        case JUMP:
+            cout << "JUMP to " << static_cast<int>(addressValue) << "if 0x0 = " <<setw(2)<<setfill('0')<< registerIndex << ". [SUCCESS]\n";
+            if (registers[registerIndex].getValue() == registers[0x00].getValue()) {
                 programCounter = addressValue;
             }
             break;
-        case 0x0C:
-            if (registerIndex == 0x00 && addressValue == 0x00){
+
+        case HALT:
+            if (registerIndex == 0x00 && addressValue == 0x00) {
                 cout << "Program Executed Successfully!\n";
                 break;
-            }else{
+            } else {
                 cout << "Invalid Format for the operand\n";
             }
+
         default:
             cout << "Invalid opcode: " << hex << uppercase << static_cast<int>(opcode) << endl;
             break;

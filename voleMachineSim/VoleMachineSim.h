@@ -1,8 +1,8 @@
 #ifndef MACHINESIMULATOR_H
 #define MACHINESIMULATOR_H
+#define BYTE unsigned char
 
 #include <bits/stdc++.h>
-#include <windef.h>
 
 using namespace std;
 
@@ -16,7 +16,6 @@ public:
     BYTE getValue() ;
 
     void setValue(BYTE value);
-
 private:
     BYTE value;
 };
@@ -52,6 +51,8 @@ public:
 
     void displayStatus();
 
+    void clearRegisters();
+
     void setProgramCounter(BYTE address);
 
     void fetchInstruction();
@@ -66,6 +67,7 @@ private:
     Memory memory;
     Register registers[16];
     BYTE opcode,addValue,registerIndex;
+    string screenOutput;
 };
 
 
