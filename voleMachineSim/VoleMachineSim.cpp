@@ -81,17 +81,10 @@ void MachineSimulator::loadProgram(const string &filename, BYTE address) {
     BYTE memoryAddress = address;
     // Consider taking the input line as 0XA 0XB 0XCD
     while (getline(programFile, line)) {
-<<<<<<< HEAD
-        istringstream ss(line);
-        int token1, token2, token3;
-
-        while (ss >> hex >> token1 >> hex >> token2 >> hex >> token3) {
-=======
         istringstream ss(line); // string stream to get each token separately
         int token1, token2, token3; // eg: token1 = 0xA , token2 = 0xB, token3 = 0xCD
 
         while (ss >> hex >> token1 >> hex >> token2 >> hex >> token3) { // take the whole 3 tokens per lien
->>>>>>> fa62275123f1f801fa8a457cb8734d7716c6e806
             BYTE data1 = static_cast<BYTE>(token1);
             BYTE data2 = static_cast<BYTE>(token2);
             BYTE data3 = static_cast<BYTE>(token3);
@@ -99,12 +92,7 @@ void MachineSimulator::loadProgram(const string &filename, BYTE address) {
             // Combine the first two tokens and store in memory
             BYTE combinedData = (data1 << 4) | data2;
             memory.store(memoryAddress++, combinedData);
-<<<<<<< HEAD
-            combinedData = (data3 << 4);
-            memory.store(memoryAddress++, '0'+combinedData);
-=======
             memory.store(memoryAddress++, data3); // store the last token in memory, as it doesn't need combine
->>>>>>> fa62275123f1f801fa8a457cb8734d7716c6e806
         }
     }
     programFile.close();
