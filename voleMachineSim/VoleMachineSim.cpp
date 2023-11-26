@@ -56,6 +56,9 @@ MachineSimulator::MachineSimulator() {
     programCounter = 0x0;
     instructionRegister[0].setValue(0x00);
     instructionRegister[1].setValue(0x01);
+    opcode = 0;
+    addValue = 0;
+    registerIndex = 0;
 }
 
 
@@ -63,7 +66,7 @@ void MachineSimulator::clearRegisters() {
     for (int i = 0; i < 16; ++i) {
         registers[i].setValue(0x0); // Clears all registers and screen
     }
-    screenOutput = "";
+    screenOutput.clear();
 }
 
 // loading the file function
@@ -231,63 +234,64 @@ void MachineSimulator::decode() {
 
 }
 
-void MachineSimulator::findAndExecuteInstruction(BYTE opcode, BYTE registerIndex, BYTE addressValue) {
+void MachineSimulator::findAndExecuteInstruction(BYTE operation_code, BYTE register_index, BYTE addressValue) {
     BYTE f_bits, s_bits;
     int add_result;
     f_bits = addressValue >> 4;
     s_bits = addressValue & 0x0F;
     int f_val, s_val;
-    switch (opcode) {
+    switch (operation_code) {
         case LOAD:
-            registers[registerIndex].setValue(memory.getCell(addressValue));
-            cout << "LOAD 0x" <<setw(2)<<setfill('0')<< registerIndex << " with pattern in: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
+            registers[register_index].setValue(memory.getCell(addressValue));
+            cout << "LOAD 0x" <<setw(2)<<setfill('0')<< register_index << " with pattern in: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
             break;
 
         case LOAD2:
-            registers[registerIndex].setValue(addressValue);
-            cout << "LOAD 0x" <<setw(2)<<setfill('0')<< registerIndex << " with the pattern: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
+            registers[register_index].setValue(addressValue);
+            cout << "LOAD 0x" <<setw(2)<<setfill('0')<< register_index << " with the pattern: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
             break;
 
         case STORE:
             // 3210 put content of reg 2 in add 10
-            memory.store(addressValue, registers[registerIndex].getValue());
-            cout << "STORE the value in register 0x" <<setw(2)<<setfill('0')<< registerIndex << " in memory cell: 0x" << static_cast<int>(addressValue)
+            memory.store(addressValue, registers[register_index].getValue());
+            cout << "STORE the value in register 0x" <<setw(2)<<setfill('0')<< register_index << " in memory cell: 0x" << static_cast<int>(addressValue)
                  << ". [SUCCESS]\n";
             if (addressValue == 0x00) {
-                memory.store(addressValue, registers[registerIndex].getValue());
-                screenOutput += static_cast<int> (registers[registerIndex].getValue());
+                memory.store(addressValue, registers[register_index].getValue());
+                screenOutput += static_cast<int> (registers[register_index].getValue());
             }
             break;
 
         case MOVE:
             registers[s_bits] = registers[f_bits];
-            cout << "MOVE 0x" <<setw(2)<<setfill('0')<< registerIndex << " to: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
+            cout << "MOVE 0x" <<setw(2)<<setfill('0')<< register_index << " to: 0x" << static_cast<int>(addressValue) << ". [SUCCESS]\n";
             break;
 
         case ADD:
-            cout << "ADD the values found in 0x" << f_bits << " and 0x" << s_bits << " then store in 0x" <<setw(2)<<setfill('0')<< registerIndex
+            cout << "ADD the values found in 0x" << f_bits << " and 0x" << s_bits << " then store in 0x" <<setw(2)<<setfill('0')<< register_index
                  << ". [SUCCESS]\n";
 
             f_val = static_cast<int>(registers[f_bits].getValue());
             s_val = static_cast<int>(registers[s_bits].getValue());
             add_result = f_val + s_val;
             add_result &= ((1 << 8) - 1);
-            registers[registerIndex].setValue(static_cast<BYTE>(add_result));
+            registers[register_index].setValue(static_cast<BYTE>(add_result));
             break;
 
         case JUMP:
-            cout << "JUMP to " << static_cast<int>(addressValue) << "if 0x0 = " <<setw(2)<<setfill('0')<< registerIndex << ". [SUCCESS]\n";
-            if (registers[registerIndex].getValue() == registers[0x00].getValue()) {
+            cout << "JUMP to " << static_cast<int>(addressValue) << "if 0x0 = " <<setw(2)<<setfill('0')<< register_index << ". [SUCCESS]\n";
+            if (registers[register_index].getValue() == registers[0x00].getValue()) {
                 programCounter = addressValue;
             }
             break;
 
         case HALT:
-            if (registerIndex == 0x00 && addressValue == 0x00) {
+            if (register_index == 0x00 && addressValue == 0x00) {
                 cout << "Program Executed Successfully!\n";
                 break;
             } else {
                 cout << "Invalid Format for the operand\n";
+                break;
             }
 
         default:

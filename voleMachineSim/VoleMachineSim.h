@@ -59,7 +59,7 @@ public:
 
     void decode();
 
-    void findAndExecuteInstruction(BYTE opcode, BYTE registerIndex, BYTE addressValue);
+    void findAndExecuteInstruction(BYTE operation_code, BYTE register_index, BYTE addressValue);
 
 private:
     Register instructionRegister[2];
