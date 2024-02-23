@@ -1,2 +1,1 @@
-# CS213-A2-FCAI
-Repository for collaborative work on Assignment 2 with Dr. Mohamed Elramly.
+This repository encompasses two fundamental C++ object-oriented applications created as part of a college assignment. I collaborated with Mohamed Farag and Mohamed Talaat on these projects. The first one is a library designed for handling large real integers, capable of representing them as strings and performing basic string operations. The second project is a machine language simulator inspired by the book 'Computer Science: An Overview.' It has the ability to read files, execute simple operations, and includes a visualization feature for memory.
